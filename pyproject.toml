@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "datagram"
+version = "2024.9.18"
+requires-python = ">= 3.8"
+dependencies = [
+  "polars>=1.6.0"
+]
+authors = [
+    {name = "Jalen Merluza", email = "jalenmerluza12@gmail.com"}
+]
+description = "Convert data frames to er diagrams using mermaid syntax."
+readme = "README.md"
+license = {file = "LICENSE.txt"}
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Programming Language :: Python"
+]
+
+[project.urls]
+Repository = "https://github.com/jmerluza/datagram"
