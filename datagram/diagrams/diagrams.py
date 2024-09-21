@@ -1,4 +1,5 @@
 import polars as pl
+import re
 
 class ERDiagram:
     """Entity Relationship Diagram. This diagram describes the interrelations between data
@@ -13,8 +14,8 @@ class ERDiagram:
     ):
         self.df = data
         self.name = entity_name
-        self.pk = primary_key
-        self.fk = foreign_keys
+        self.pk = self.__clean_column_name(primary_key)
+        self.fk = self.__clean_column_name(foreign_keys)
 
     def __str__(self) -> str:
         mermaid_diagram = ["erDiagram\n\t"]
@@ -30,16 +31,39 @@ class ERDiagram:
         )
 
         return mermaid_string
-        
     
+    def __clean_column_name(self, cols: list[str]|str) -> list[str]|str:
+        """Clean column(s) from special characters as they are not allowed in mermaid syntax."""
+        if isinstance(cols, list):
+            return [
+                (re.sub(r"[!@%^&*+><//.]","",c))
+                .strip()
+                .replace(" ","_")
+                .replace("$","Dollars")
+                .replace("#","Number")
+                for c in cols
+            ]
+        else:
+            return (
+                (re.sub(r"[!@%^&*+><//.]","",cols))
+                .strip()
+                .replace(" ","_")
+                .replace("$","Dollars")
+                .replace("#","Number")
+            )
+        
     def __build_attributes(self) -> list[str]:
+        """Build the attributes string."""
         attributes = []
-        attribute_schema = dict(zip(self.df.dtypes, self.df.columns))
-        for a in attribute_schema:
-            attribute_type = a
-            attribute_name = attribute_schema.get(a)
-            attribute = f"\n\t\t{attribute_type} {attribute_name}"
+        cols = self.__clean_column_name(self.df.columns)
 
+        attribute_schema = dict(zip(cols, self.df.dtypes))
+
+        for a in attribute_schema:
+            attribute_type = attribute_schema.get(a)
+            attribute_name = a
+            attribute = f"\n\t\t{attribute_type} {attribute_name}"
+            
             if attribute_name == self.pk:
                 pk = True
                 attribute += " PK"
@@ -51,6 +75,7 @@ class ERDiagram:
                     attribute += ", FK"
                 else:
                     attribute += " FK"
+
             attributes.append(attribute)
 
         return attributes

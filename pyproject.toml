@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "datagram"
-version = "2024.9.18"
+version = "2024.9.21"
 requires-python = ">= 3.8"
 dependencies = [
   "polars>=1.6.0"
